@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="styles/styles.css">
 
     <!-- dependencies -->
+    <script src="bower_components/underscore/underscore.js"></script>
     <script src="bower_components/jquery/dist/jquery.js"></script>
     <script>
       // YOU DO NOT NEED TO EDIT THIS CODE
@@ -25,8 +26,18 @@
   <body>
     <div id="main">
       <h1>chatterbox</h1>
+      <div id='send'>
+        <input id="message"></input>
+        <button class="submit">Submit</button>
+      </div>
       <div id="roomSelect"></div>
+      <div id="friends"></div>
+      <hr>
+      <div id="userList"></div>
+
     </div>
     <div id="chats"></div>
+
+
   </body>
 </html>
