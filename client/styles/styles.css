@@ -15,6 +15,10 @@ h1 {
   border: 1px solid red;
 }
 
+.hidden-message {
+  display: none;
+}
+
 #main, #chats {
     width: 500px;
     margin: auto;

@@ -8,7 +8,8 @@ var app = {
   lastMsg: '',
   appUsername: 'no one and everyone',
   friends: {},
-  rooms: {},
+  rooms: {'View all': true},
+  activeRoom: 'View all',
 
   init: function() {
     $('.submit').on('click submit', this.handleSubmit.bind(this));
@@ -16,10 +17,20 @@ var app = {
     this.refreshFeed();
     setInterval(this.refreshFeed.bind(this), 2000);
 
+    this.renderRoom(this.activeRoom);
+
     var context = this;
     $(document.body).on('click', '.username', function() {
       var username = $(this).data('username');
       context.handleUsernameClick(username);
+    });
+    $(document.body).on('click', '.roomname', function() {
+      var roomname = $(this).data('roomname');
+      context.handleRoomnameClick(roomname);
+    });
+    $(document.body).on('click', '.addRoom', function() {
+      var roomname = $('#newRoom').val();
+      context.handleNewRoom(roomname);
     });
   },
   send: function(message) {
@@ -50,15 +61,16 @@ var app = {
   renderMessage: function(message) {
     var cleanMessageText = htmlEncode(message.text);
     var cleanUsername = htmlEncode(message.username);
+    var cleanRoomname = htmlEncode(message.roomname);
     var className = 'message';
     if (this.friends[cleanUsername]) {
       className += ' friend-message';
     }
-    var $newMessage = $(`<p><span class='${className}' data-username='${cleanUsername}'>${cleanUsername}: ${cleanMessageText} - ${message.createdAt}</span></p>`);
+    var $newMessage = $(`<p><span class='${className}' data-roomname='${cleanRoomname}' data-username='${cleanUsername}'>${cleanUsername}: ${cleanMessageText} - ${message.roomname}</span></p>`);
     $('#chats').prepend($newMessage);
   },
   renderRoom: function(room) {
-    $('#roomSelect').append(`<p>${room}</p>`);
+    $('#roomSelect').append(`<p class='roomname' data-roomname='${room}'>${room}</p>`);
   },
   renderUser: function(username) {
     var $newUser = $(`<p class='username' data-username='${username}'>${username}</p>`);
@@ -72,17 +84,32 @@ var app = {
       $('[data-username=harambe].message').addClass('friend-message');
     }
   },
+  handleRoomnameClick: function(room) {
+    this.activeRoom = room;
+
+    var context = this;
+    $('.message').each(function() {
+      var $message = $(this);
+      $message.removeClass('hidden-message');
+      if (context.activeRoom !== 'View all' && context.activeRoom !== $message.data('roomname')) {
+        $message.addClass('hidden-message');
+      }
+    });
+  },
   handleSubmit: function() {
     var message = {
       text: $('#message').val(),
       username: $('#myName').val(),
-      roomname: 'Where da elephant?'
+      roomname: this.activeRoom
     };
     this.send(message);
     this.refreshFeed();
 
   },
-  // loop through all .username items inside chat
+  handleNewRoom: function(roomname) {
+    this.rooms[roomname] = true;
+    this.renderRoom(roomname);
+  },
   refreshFeed: function() {
     this.fetch(function (data) {
 
@@ -107,7 +134,10 @@ var app = {
         var cleanUsername = htmlEncode(datum.username);
         var cleanRoomname = htmlEncode(datum.roomname);
 
-        this.renderMessage(datum);
+        if (this.activeRoom === 'View all' || this.activeRoom === cleanRoomname) {
+          this.renderMessage(datum);
+        }
+
         if (!(this.users[cleanUsername])) {
           this.users[cleanUsername] = true;
           this.renderUser(cleanUsername);
