@@ -1,9 +1,13 @@
+var htmlEncode = function(value) {
+  return $('<div/>').text(value).html();
+};
+
 var app = {
   server: 'https://api.parse.com/1/classes/messages',
+
   init: function() {
     $('.submit').on('click submit', this.handleSubmit.bind(this));
-    // this = app
-    // $('#main').append('<div class="userList"></div>');
+
     this.fetch(function (data) {
       var users = {};
       data.results.forEach(function(datum) {
@@ -18,9 +22,11 @@ var app = {
       }
     }.bind(this));
 
-    // $(document.body).on('click', '.username', function() {
-    //   console.log('haha');
-    // });
+    var context = this;
+    $(document.body).on('click', '.username', function() {
+      var username = $(this).data('username');
+      context.handleUsernameClick(username);
+    });
   },
   send: function(message) {
     $.ajax({
@@ -48,26 +54,22 @@ var app = {
     $('#chats').html('');
   },
   renderMessage: function(message) {
-    var $newMessage = $(`<p><span class='username' data-username='${message.username}'>${message.text}</span></p>`);
+    var cleanMessageText = htmlEncode(message.text);
+    var cleanUsername = htmlEncode(message.username);
+    var $newMessage = $(`
+      <p>
+        <span class='username' data-username='${cleanUsername}:'>
+        ${cleanUsername}: ${cleanMessageText}
+        </span>
+      </p>`);
     $('#chats').append($newMessage);
-    var context = this;
-    $newMessage.on('click', '.username', function() {
-      var username = $(this).data('username');
-      context.handleUsernameClick(username);
-    });
   },
   renderRoom: function(room) {
     $('#roomSelect').append(`<h1>${room}</h1>`);
   },
   renderUser: function(username) {
-    var context = this;
     var $newUser = $(`<p class='username' data-username='${username}'>${username}</p>`);
     $newUser.appendTo('#userList');
-    $newUser.on('click', function() {
-      var username = $(this).data('username');
-      context.handleUsernameClick(username);
-    });
-
   },
   handleUsernameClick: function(friend) {
     $('#friends').append(`<h2>${friend}</h1>`);
@@ -75,10 +77,9 @@ var app = {
   handleSubmit: function() {
     var message = {
       text: $('#message').val(),
-      username: 'John the other guy, jk not me',
-      roomname: 'Do not disturb'
+      username: $.url().param('username'),
+      roomname: ''
     };
-    console.log(message);
     this.send(message);
 
   }
