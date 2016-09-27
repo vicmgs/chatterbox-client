@@ -8,6 +8,7 @@ var app = {
   lastMsg: '',
   appUsername: 'no one and everyone',
   friends: {},
+  rooms: {},
 
   init: function() {
     $('.submit').on('click submit', this.handleSubmit.bind(this));
@@ -57,7 +58,7 @@ var app = {
     $('#chats').prepend($newMessage);
   },
   renderRoom: function(room) {
-    $('#roomSelect').append(`<h1>${room}</h1>`);
+    $('#roomSelect').append(`<p>${room}</p>`);
   },
   renderUser: function(username) {
     var $newUser = $(`<p class='username' data-username='${username}'>${username}</p>`);
@@ -75,7 +76,7 @@ var app = {
     var message = {
       text: $('#message').val(),
       username: $('#myName').val(),
-      roomname: ''
+      roomname: 'Where da elephant?'
     };
     this.send(message);
     this.refreshFeed();
@@ -104,11 +105,16 @@ var app = {
       for (var i = newMessages.length - 1; i >= 0; i--) {
         var datum = newMessages[i];
         var cleanUsername = htmlEncode(datum.username);
+        var cleanRoomname = htmlEncode(datum.roomname);
 
         this.renderMessage(datum);
         if (!(this.users[cleanUsername])) {
           this.users[cleanUsername] = true;
           this.renderUser(cleanUsername);
+        }
+        if (!(this.rooms[cleanRoomname])) {
+          this.rooms[cleanRoomname] = true;
+          this.renderRoom(cleanRoomname);
         }
       }
 
