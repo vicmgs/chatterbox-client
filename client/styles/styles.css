@@ -2,7 +2,12 @@ body {
     background: #eee;
     text-align: center;
     padding: 0 25px;
-    font-family: arial, sans-serif;
+    font-family: 'Open Sans', sans-serif;
+}
+
+h1 {
+  font-family: 'Pattaya', serif;
+  /*text-transform: uppercase;*/
 }
 
 #main, #chats {
@@ -87,4 +92,3 @@ form input[type=text] {
     color: #fff;
     background-color: #0090da;
 }
-
