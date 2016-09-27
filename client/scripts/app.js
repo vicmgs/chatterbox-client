@@ -4,23 +4,14 @@ var htmlEncode = function(value) {
 
 var app = {
   server: 'https://api.parse.com/1/classes/messages',
+  users: {},
+  lastMsg: '',
 
   init: function() {
     $('.submit').on('click submit', this.handleSubmit.bind(this));
 
-    this.fetch(function (data) {
-      var users = {};
-      data.results.forEach(function(datum) {
-        this.renderMessage(datum);
-        users[datum.username] = true;
-
-      }.bind(this));
-
-      // render each user
-      for (var key in users) {
-        this.renderUser(key);
-      }
-    }.bind(this));
+    this.refreshFeed();
+    setInterval(this.refreshFeed.bind(this), 2000);
 
     var context = this;
     $(document.body).on('click', '.username', function() {
@@ -56,20 +47,15 @@ var app = {
   renderMessage: function(message) {
     var cleanMessageText = htmlEncode(message.text);
     var cleanUsername = htmlEncode(message.username);
-    var $newMessage = $(`
-      <p>
-        <span class='username' data-username='${cleanUsername}:'>
-        ${cleanUsername}: ${cleanMessageText}
-        </span>
-      </p>`);
-    $('#chats').append($newMessage);
+    var $newMessage = $(`<p><span class='username' data-username='${cleanUsername}:'>${cleanUsername}: ${cleanMessageText} - ${message.createdAt}</span></p>`);
+    $('#chats').prepend($newMessage);
   },
   renderRoom: function(room) {
     $('#roomSelect').append(`<h1>${room}</h1>`);
   },
   renderUser: function(username) {
     var $newUser = $(`<p class='username' data-username='${username}'>${username}</p>`);
-    $newUser.appendTo('#userList');
+    $newUser.prependTo('#userList');
   },
   handleUsernameClick: function(friend) {
     $('#friends').append(`<h2>${friend}</h1>`);
@@ -77,11 +63,43 @@ var app = {
   handleSubmit: function() {
     var message = {
       text: $('#message').val(),
-      username: $.url().param('username'),
+      username: 'anne, probably',
       roomname: ''
     };
     this.send(message);
+    this.refreshFeed();
 
+  },
+  refreshFeed: function() {
+    this.fetch(function (data) {
+
+      if (!this.lastMsg) {
+        this.lastMsg = data.results[data.results.length - 1].objectId;
+      }
+
+      var newMessages = [];
+
+      for (var datum of data.results) {
+        if (datum.objectId === this.lastMsg) {
+          this.lastMsg = data.results[0].objectId;
+          break;
+        }
+
+        newMessages.push(datum);
+      }
+
+
+      for (var i = newMessages.length - 1; i >= 0; i--) {
+        var datum = newMessages[i];
+
+        this.renderMessage(datum);
+        if (!(this.users[datum.username])) {
+          this.users[datum.username] = true;
+          this.renderUser(datum.username);
+        }
+      }
+
+    }.bind(this));
   }
 };
 
