@@ -66,22 +66,22 @@ var app = {
     if (this.friends[cleanUsername]) {
       className += ' friend-message';
     }
-    var $newMessage = $(`<p><span class='${className}' data-roomname='${cleanRoomname}' data-username='${cleanUsername}'>${cleanUsername}: ${cleanMessageText} - ${message.roomname}</span></p>`);
+    var $newMessage = $(`<p><span class='${className}' data-roomname='${cleanRoomname}' data-username='${cleanUsername}'>${cleanUsername}: ${cleanMessageText}</span></p>`);
     $('#chats').prepend($newMessage);
   },
   renderRoom: function(room) {
-    $('#roomSelect').append(`<p class='roomname' data-roomname='${room}'>${room}</p>`);
+
+    $('#roomSelect').append(`<span class='roomname' data-roomname='${room}'>${room}    </span>`);
   },
   renderUser: function(username) {
-    var $newUser = $(`<p class='username' data-username='${username}'>${username}</p>`);
+    var $newUser = $(`<span class='username' data-username='${username}'>${username}    </span>`);
     $newUser.prependTo('#userList');
   },
   handleUsernameClick: function(friend) {
     if (!this.friends[friend]) {
       $('#friends').append(`<h2>${friend}</h1>`);
       this.friends[friend] = true;
-      // find all .username items where data-username=friend
-      $('[data-username=harambe].message').addClass('friend-message');
+      $(`[data-username='${friend}'].message`).addClass('friend-message');
     }
   },
   handleRoomnameClick: function(room) {
@@ -112,7 +112,7 @@ var app = {
   },
   refreshFeed: function() {
     this.fetch(function (data) {
-
+      console.log(data);
       if (!this.lastMsg) {
         this.lastMsg = data.results[data.results.length - 1].objectId;
       }
