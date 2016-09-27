@@ -71,10 +71,10 @@ var app = {
   },
   renderRoom: function(room) {
 
-    $('#roomSelect').append(`<span class='roomname' data-roomname='${room}'>${room}    </span>`);
+    $('#roomSelect').append(`<p class='roomname' data-roomname='${room}'>${room}    </p>`);
   },
   renderUser: function(username) {
-    var $newUser = $(`<span class='username' data-username='${username}'>${username}    </span>`);
+    var $newUser = $(`<p class='username' data-username='${username}'>${username}    </p>`);
     $newUser.prependTo('#userList');
   },
   handleUsernameClick: function(friend) {

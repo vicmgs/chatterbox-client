@@ -1,8 +1,22 @@
 body {
     background: #eee;
-    text-align: center;
-    padding: 0 25px;
+    height: 100%;
+    text-align: left;
+    padding: 0;
+    margin: 0;
     font-family: 'Open Sans', sans-serif;
+    display: flex;
+    flex-flow: row wrap;
+
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+  overflow: hidden;
 }
 
 h1 {
@@ -19,7 +33,34 @@ h1 {
   display: none;
 }
 
-#main, #chats {
+.left{
+  width: 70%;
+  height: 100%;
+  border: 1px red solid;
+  padding: 2em;
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+.right{
+  width: 30%;
+  padding: 2em;
+}
+
+.top{
+  height: 20%;
+}
+
+#chats{
+  overflow: scroll;
+}
+
+.user-input{
+  height: 20%;
+}
+
+
+/*#main, #chats {
     width: 500px;
     margin: auto;
     text-align: left;
@@ -27,15 +68,15 @@ h1 {
     padding: 50px 60px;
     border: solid #ddd;
     border-width: 0 1px 1px 1px;
-}
+}*/
 
-#main h1 {
+/*#main h1 {
     margin-top: 0;
     font-size: 35px;
     margin-bottom: 5px;
     padding: 5px;
-}
-
+}*/
+/*
 #main h1 span {
     font-style:italic;
 }
@@ -48,9 +89,9 @@ h1 {
     border: 1px solid red;
     background: #FDEFF0;
     padding: 20px;
-}
+}*/
 
-#main .success {
+/*#main .success {
     margin-top: 25px;
 }
 
@@ -58,9 +99,9 @@ h1 {
     font-size: 12px;
     color: green;
     line-height: 13px;
-}
+}*/
 
-form {
+/*form {
     padding: 20px;
     padding-left: 0;
     margin-bottom: 20px;
@@ -100,4 +141,4 @@ form input[type=text] {
 .friend {
     color: #fff;
     background-color: #0090da;
-}
+}*/

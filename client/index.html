@@ -14,28 +14,43 @@
     <script src="scripts/app.js"></script>
   </head>
   <body>
-    <div id="main">
-      <h1>Chatterbox</h1>
-      <div id='send'>
-        <input id="message"></input>
-        <button class="submit">Submit</button>
+
+
+
+    <div class='left'>
+
+      <div class='top'>
+        <h1>Chatterbox</h1>
+        <div id="roomSelect"></div>
+        <div>
+          <input id="newRoom"></input>
+          <button class="addRoom">Add room</button>
+        </div>
       </div>
-      <div>
-        <input id="newRoom"></input>
-        <button class="addRoom">Add room</button>
+
+      <div id='chats'>
       </div>
-      <div>
-        <input id="myName" value="the guy"></input>
+
+      <div class='user-input'>
+        <div id='send'>
+          <input id="myName" value="the guy"></input>
+          <input id="message"></input>
+          <button class="submit">Submit</button>
+        </div>
       </div>
-      <hr>
-      <div id="roomSelect"></div>
-      <hr>
-      <div id="friends"></div>
-      <hr>
-      <div id="userList"></div>
 
     </div>
-    <div id="chats"></div>
+
+    <div class='right'>
+      <div id="friends" class='people-container'>
+        <h2>Friend List</h2>
+        <div class='people-list'></div>
+      </div>
+      <div class='people-container'>
+        <h2>User List</h2>
+        <div id="userList" class='people-list'></div>
+      </div>
+    </div>
 
 
   </body>
