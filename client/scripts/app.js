@@ -49,7 +49,11 @@ var app = {
   renderMessage: function(message) {
     var cleanMessageText = htmlEncode(message.text);
     var cleanUsername = htmlEncode(message.username);
-    var $newMessage = $(`<p><span class='message' data-username='${cleanUsername}'>${cleanUsername}: ${cleanMessageText} - ${message.createdAt}</span></p>`);
+    var className = 'message';
+    if (this.friends[cleanUsername]) {
+      className += ' friend-message';
+    }
+    var $newMessage = $(`<p><span class='${className}' data-username='${cleanUsername}'>${cleanUsername}: ${cleanMessageText} - ${message.createdAt}</span></p>`);
     $('#chats').prepend($newMessage);
   },
   renderRoom: function(room) {

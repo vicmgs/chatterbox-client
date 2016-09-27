@@ -12,6 +12,7 @@ h1 {
 
 .friend-message {
   font-weight: 800;
+  border: 1px solid red;
 }
 
 #main, #chats {
