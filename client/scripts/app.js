@@ -51,6 +51,7 @@ var app = {
     $.ajax({
       url: this.server,
       type: 'GET',
+      data: {order: '-createdAt'},
       success: callback,
       error: callback
     });
@@ -71,21 +72,23 @@ var app = {
   },
   renderRoom: function(room) {
 
-    $('#roomSelect').append(`<p class='roomname' data-roomname='${room}'>${room}    </p>`);
+    $('#roomSelect').append(`<div class='roomname' data-roomname='${room}'>${room}</div>`);
   },
   renderUser: function(username) {
-    var $newUser = $(`<p class='username' data-username='${username}'>${username}    </p>`);
+    var $newUser = $(`<p class='username' data-username='${username}'>${username}</p>`);
     $newUser.prependTo('#userList');
   },
   handleUsernameClick: function(friend) {
     if (!this.friends[friend]) {
-      $('#friends').append(`<h2>${friend}</h1>`);
+      $('#friends .people-list').append(`<p>${friend}</p>`);
       this.friends[friend] = true;
       $(`[data-username='${friend}'].message`).addClass('friend-message');
     }
   },
   handleRoomnameClick: function(room) {
     this.activeRoom = room;
+    $('.active-room').removeClass('active-room');
+    $(`[data-roomname='${room}'].roomname`).addClass('active-room');
 
     var context = this;
     $('.message').each(function() {
