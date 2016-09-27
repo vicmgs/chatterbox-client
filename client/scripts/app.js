@@ -6,6 +6,8 @@ var app = {
   server: 'https://api.parse.com/1/classes/messages',
   users: {},
   lastMsg: '',
+  appUsername: 'no one and everyone',
+  friends: {},
 
   init: function() {
     $('.submit').on('click submit', this.handleSubmit.bind(this));
@@ -47,7 +49,7 @@ var app = {
   renderMessage: function(message) {
     var cleanMessageText = htmlEncode(message.text);
     var cleanUsername = htmlEncode(message.username);
-    var $newMessage = $(`<p><span class='username' data-username='${cleanUsername}:'>${cleanUsername}: ${cleanMessageText} - ${message.createdAt}</span></p>`);
+    var $newMessage = $(`<p><span class='message' data-username='${cleanUsername}'>${cleanUsername}: ${cleanMessageText} - ${message.createdAt}</span></p>`);
     $('#chats').prepend($newMessage);
   },
   renderRoom: function(room) {
@@ -58,18 +60,24 @@ var app = {
     $newUser.prependTo('#userList');
   },
   handleUsernameClick: function(friend) {
-    $('#friends').append(`<h2>${friend}</h1>`);
+    if (!this.friends[friend]) {
+      $('#friends').append(`<h2>${friend}</h1>`);
+      this.friends[friend] = true;
+      // find all .username items where data-username=friend
+      $('[data-username=harambe].message').addClass('friend-message');
+    }
   },
   handleSubmit: function() {
     var message = {
       text: $('#message').val(),
-      username: 'anne, probably',
+      username: $('#myName').val(),
       roomname: ''
     };
     this.send(message);
     this.refreshFeed();
 
   },
+  // loop through all .username items inside chat
   refreshFeed: function() {
     this.fetch(function (data) {
 
@@ -91,11 +99,12 @@ var app = {
 
       for (var i = newMessages.length - 1; i >= 0; i--) {
         var datum = newMessages[i];
+        var cleanUsername = htmlEncode(datum.username);
 
         this.renderMessage(datum);
-        if (!(this.users[datum.username])) {
-          this.users[datum.username] = true;
-          this.renderUser(datum.username);
+        if (!(this.users[cleanUsername])) {
+          this.users[cleanUsername] = true;
+          this.renderUser(cleanUsername);
         }
       }
 
