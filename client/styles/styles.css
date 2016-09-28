@@ -59,13 +59,13 @@ input:focus {
   border: 1px solid rgba(0, 205, 153, 1);
 }
 
-#newRoom {
+#new-room {
   padding: 8px 8px 9px 8px;
   position: relative;
   top: -2px;
 }
 
-.addRoom {
+.add-room {
   margin-left: -4px;
 }
 
@@ -137,6 +137,8 @@ h1, h2 {
   display: flex;
   flex-flow: row wrap;
   justify-content: space-around;
+  overflow: scroll;
+  height: 50%;
 }
 
 .roomname {
@@ -156,7 +158,9 @@ h1, h2 {
 }
 
 .active-room {
-  background-color: white;
+  color: #fff;
+  background-color: rgba(0, 205, 153, 1);
+  border-color: rgba(0, 205, 153, 1);
 }
 
 .people-container {

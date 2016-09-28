@@ -46,9 +46,9 @@ var app = {
       var roomname = $(this).data('roomname');
       context.handleRoomnameClick(roomname);
     });
-    $(document.body).on('click', '.addRoom', function() {
-      var roomname = $('#newRoom').val();
-      context.handleNewRoom(roomname);
+    $(document.body).on('click', '.add-room', function() {
+      var roomname = $('#new-room').val();
+      context.handleAddRoom(roomname);
     });
     $(document.body).on('click', '.friendname', function() {
       $(this).remove();
@@ -99,7 +99,7 @@ var app = {
   },
   renderUser: function(username) {
     var $newUser = $(`<li class='username' data-username='${username}'>${username}</li>`);
-    $newUser.prependTo('#userList');
+    $newUser.prependTo('#user-list');
   },
   handleUsernameClick: function(friend) {
     if (!this.friends[friend]) {
@@ -125,14 +125,14 @@ var app = {
   handleSubmit: function() {
     var message = {
       text: $('#message').val(),
-      username: $('#myName').val(),
+      username: $('#my-name').val(),
       roomname: this.activeRoom
     };
     this.send(message);
     this.refreshFeed();
     $('#message').val('');
   },
-  handleNewRoom: function(roomname) {
+  handleAddRoom: function(roomname) {
     this.rooms[roomname] = true;
     this.renderRoom(roomname);
   },
