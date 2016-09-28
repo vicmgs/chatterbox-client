@@ -22,7 +22,7 @@
       <div class='top'>
         <h1>Chatterbox</h1>
         <div id="roomSelect"></div>
-        <div>
+        <div class="room-input-container">
           <input id="newRoom"></input>
           <button class="addRoom">Add room</button>
         </div>
@@ -33,8 +33,9 @@
 
       <div class='user-input'>
         <div id='send'>
-          <input id="myName" value="the guy"></input>
-          <input id="message"></input>
+          <span class="input-label">Username</span>
+          <input id="myName" value="User"></input>
+          <input id="message" placeholder="Type message here..."></input>
           <button class="submit">Submit</button>
         </div>
       </div>
@@ -44,11 +45,11 @@
     <div class='right'>
       <div id="friends" class='people-container'>
         <h2>Friend List</h2>
-        <div class='people-list'></div>
+        <ul class='people-list'></ul>
       </div>
       <div class='people-container'>
         <h2>User List</h2>
-        <div id="userList" class='people-list'></div>
+        <ul id="userList" class='people-list'></ul>
       </div>
     </div>
 

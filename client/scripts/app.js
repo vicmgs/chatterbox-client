@@ -2,6 +2,12 @@ var htmlEncode = function(value) {
   return $('<div/>').text(value).html();
 };
 
+// set universal on focus to be regular title
+// on new messages, set some new messages var count
+// if not on page, alert user with title
+// once BACK on page after having unread messages, reset inactive page title to
+  // be default
+
 var app = {
   server: 'https://api.parse.com/1/classes/messages',
   users: {},
@@ -10,16 +16,28 @@ var app = {
   friends: {},
   rooms: {'View all': true},
   activeRoom: 'View all',
+  newMsgs: 0,
+  titleTimer: null,
 
   init: function() {
+
+    var context = this;
     $('.submit').on('click submit', this.handleSubmit.bind(this));
+
+    $(window).focus(function() {
+      context.newMsgs = 0;
+      document.title = 'chatterbox';
+      clearInterval(context.titleTimer);
+      context.titleTimer = null;
+    });
 
     this.refreshFeed();
     setInterval(this.refreshFeed.bind(this), 2000);
 
     this.renderRoom(this.activeRoom);
+    $('.roomname').addClass('active-room');
 
-    var context = this;
+
     $(document.body).on('click', '.username', function() {
       var username = $(this).data('username');
       context.handleUsernameClick(username);
@@ -31,6 +49,11 @@ var app = {
     $(document.body).on('click', '.addRoom', function() {
       var roomname = $('#newRoom').val();
       context.handleNewRoom(roomname);
+    });
+    $(document.body).on('click', '.friendname', function() {
+      $(this).remove();
+      delete context.friends[$(this).text()];
+      $(`[data-username='${$(this).text()}'].message`).removeClass('friend-message');
     });
   },
   send: function(message) {
@@ -75,12 +98,12 @@ var app = {
     $('#roomSelect').append(`<div class='roomname' data-roomname='${room}'>${room}</div>`);
   },
   renderUser: function(username) {
-    var $newUser = $(`<p class='username' data-username='${username}'>${username}</p>`);
+    var $newUser = $(`<li class='username' data-username='${username}'>${username}</li>`);
     $newUser.prependTo('#userList');
   },
   handleUsernameClick: function(friend) {
     if (!this.friends[friend]) {
-      $('#friends .people-list').append(`<p>${friend}</p>`);
+      $('#friends .people-list').append(`<li class='friendname'>${friend}</li>`);
       this.friends[friend] = true;
       $(`[data-username='${friend}'].message`).addClass('friend-message');
     }
@@ -107,21 +130,35 @@ var app = {
     };
     this.send(message);
     this.refreshFeed();
-
+    $('#message').val('');
   },
   handleNewRoom: function(roomname) {
     this.rooms[roomname] = true;
     this.renderRoom(roomname);
   },
+  updateTitle: function() {
+    var isShowingCount = false;
+    if (!this.titleTimer) {
+      this.titleTimer = setInterval( () => {
+        if (isShowingCount) {
+          document.title = 'chatterbox';
+          isShowingCount = false;
+        } else {
+          document.title = `*${this.newMsgs} new messages*`;
+          isShowingCount = true;
+        }
+      }, 500);
+    }
+  },
   refreshFeed: function() {
     this.fetch(function (data) {
-      console.log(data);
       if (!this.lastMsg) {
         this.lastMsg = data.results[data.results.length - 1].objectId;
       }
 
       var newMessages = [];
 
+      // Construct array of any new messages
       for (var datum of data.results) {
         if (datum.objectId === this.lastMsg) {
           this.lastMsg = data.results[0].objectId;
@@ -131,27 +168,42 @@ var app = {
         newMessages.push(datum);
       }
 
-
-      for (var i = newMessages.length - 1; i >= 0; i--) {
-        var datum = newMessages[i];
-        var cleanUsername = htmlEncode(datum.username);
-        var cleanRoomname = htmlEncode(datum.roomname);
-
-        if (this.activeRoom === 'View all' || this.activeRoom === cleanRoomname) {
-          this.renderMessage(datum);
-        }
-
-        if (!(this.users[cleanUsername])) {
-          this.users[cleanUsername] = true;
-          this.renderUser(cleanUsername);
-        }
-        if (!(this.rooms[cleanRoomname])) {
-          this.rooms[cleanRoomname] = true;
-          this.renderRoom(cleanRoomname);
+      // Flash document title (or not) based on whether window is focused
+      // and number of new messages
+      if (newMessages.length) {
+        this.newMsgs += newMessages.length;
+        if (!document.hasFocus()) {
+          this.updateTitle();
+        } else {
+          this.newMsgs = 0;
         }
       }
 
+
+      // Update the UI, based on every new message
+      this.updateDisplay(newMessages);
+
     }.bind(this));
+  },
+  updateDisplay: function(newMessages) {
+    for (var i = newMessages.length - 1; i >= 0; i--) {
+      var datum = newMessages[i];
+      var cleanUsername = htmlEncode(datum.username);
+      var cleanRoomname = htmlEncode(datum.roomname);
+
+      if (this.activeRoom === 'View all' || this.activeRoom === cleanRoomname) {
+        this.renderMessage(datum);
+      }
+
+      if (!(this.users[cleanUsername])) {
+        this.users[cleanUsername] = true;
+        this.renderUser(cleanUsername);
+      }
+      if (!(this.rooms[cleanRoomname])) {
+        this.rooms[cleanRoomname] = true;
+        this.renderRoom(cleanRoomname);
+      }
+    }
   }
 };
 
